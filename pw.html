@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="zh-CN">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="static/vendor/bootstrap/css/bootstrap.min.css"
+        integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2">
+
+    <title>Password Generator</title>
+</head>
+
+<body>
+    <div class="container">
+        <div class="row justify-content-md-center py-3">
+            <div class="col-md-auto">
+
+                <div class="row justify-content-md-center py-3">
+                    <div class="col-md-auto">
+                        <h1>Password Generator</h1>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-3 py-1 text-right"><label for="select">Type</label></div>
+                    <div class="col py-1">
+                        <select class="custom-select" id="type">
+                            <option selected="selected" value="MD5">MD5</option>
+                            <option value="SHA-1">SHA-1</option>
+                            <option value="SHA-256">SHA-256</option>
+                            <option value="SHA-512">SHA-512</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-3 py-1  text-right"><label for="input">Content</label></div>
+                    <div class="col py-1"><input type="text" class="form-control" id="content"
+                            placeholder="website.com" required>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-3 py-1  text-right"><label for="input">HMAC</label></div>
+                    <div class="col py-1"><input type="password" class="form-control" id="hmac"
+                            placeholder="password salt">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-3 py-1  text-right"><label for="formControlRange">Iterations</label> <span
+                            class="badge badge-secondary" id="iterationsspan"></span> </div>
+                    <div class="col py-1"><input type="range" class="form-control-range" id="iterations" min="1"
+                            max="10000" step=“100” value="5000">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-3 py-1  text-right"><label for="formControlRange">Length</label> <span
+                            class="badge badge-secondary" id="lengthspan"></span></div>
+                    <div class="col py-1"><input type="range" class="form-control-range" id="length" min="1" max="40"
+                            value="16">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col py-1">
+                        <input class="form-control" type="text" id="result" readonly>
+                    </div>
+                </div>
+
+                <div class="row justify-content-md-center">
+                    <div class="col-md-auto py-1"><button type="button" class="btn btn-primary"
+                            id="encrypt">Generate</button></div>
+                </div>
+
+
+            </div>
+        </div>
+
+    </div>
+
+    <script src="static/vendor/crypto-js/crypto-js.js"
+        integrity="sha384-EjboB1VKfRIXCP11THYyOpMxWt1t1lKtrspiQEHKBJy+j7uU7Fgw7ngOwrg1GOwQ"></script>
+    <script src="static/vendor/jquery/jquery.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"></script>
+    <script src="static/vendor/bootstrap/js/bootstrap.bundle.min.js"
+        integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx"></script>
+
+    <script type="text/javascript">
+
+        function getHMACFunc(type) {
+            switch (type) {
+                case "MD5":
+                    return CryptoJS.HmacMD5;
+                case "SHA-1":
+                    return CryptoJS.HmacSHA1;
+                case "SHA-256":
+                    return CryptoJS.HmacSHA256;
+                case "SHA-512":
+                    return CryptoJS.HmacSHA512;
+                default:
+                    return CryptoJS.HmacMD5;
+            }
+        }
+
+        function getlen(refId) {
+            var len = $(refId).val();
+            var r = parseInt(len);
+            return r;
+        }
+
+        function showRange(refId, refshowId) {
+            var len = $(refId).val();
+            $(refshowId).text(len);
+        }
+
+        function get() {
+            alert('missing content');
+        }
+
+        $(document).ready(function () {
+
+            showRange("#iterations", "#iterationsspan");
+            showRange("#length", "#lengthspan");
+
+            $("#encrypt").click(function () {
+                var length = getlen("#length");
+                var iterations = getlen("#iterations");
+                var type = $("#type").val();
+                hashFunc = getHMACFunc(type);
+
+                var content = $("#content").val();
+                if (content=='') {
+                    alert('missing content')
+                    return
+                }
+
+                var hmac = $("#hmac").val();
+                if (hmac=='') {
+                    alert('missing hmac')
+                    return
+                }
+                
+                var salt = hashFunc(content, hmac);
+                var key256Bits = CryptoJS.PBKDF2(content, salt, {
+                    keySize: 256 / 32,
+                    iterations: iterations
+                });
+                var key256BitsStr = key256Bits.toString(CryptoJS.enc.Base64);
+                password = key256BitsStr.substring(0, length);
+                $("#result").val(password);
+            });
+
+
+            $("#length").change(function () {
+                showRange("#length", "#lengthspan");
+            })
+            $("#length").on('input', function () {
+                showRange("#length", "#lengthspan");
+            });
+
+            $("#iterations").change(function () {
+                showRange("#iterations", "#iterationsspan");
+            })
+            $("#iterations").on('input', function () {
+                showRange("#iterations", "#iterationsspan");
+            });
+
+        })
+    </script>
+</body>
+
+</html>
