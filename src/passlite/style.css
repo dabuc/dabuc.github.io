@@ -1,0 +1,502 @@
+/* style.css */
+:root {
+    --primary-color: #2563eb;
+    --primary-hover: #1d4ed8;
+    --success-color: #10b981;
+    --success-hover: #0da271;
+    --bg-light: #f8fafc;
+    --bg-card: #ffffff;
+    --border-color: #e2e8f0;
+    --text-primary: #334155;
+    --text-secondary: #64748b;
+    --text-light: #94a3b8;
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    --radius-sm: 6px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* 1. 修改body背景 */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, system-ui, sans-serif;
+    /* 新增：渐变背景 + 动画 */
+    background: linear-gradient(
+        135deg,
+        #f0f9ff 0%,
+        #e0f2fe 25%,
+        #fefce8 50%,
+        #fef2f2 75%,
+        #f0f9ff 100%
+    );
+    background-size: 400% 400%;
+    animation: softWave 30s ease infinite;
+    color: var(--text-primary);
+    line-height: 1.5;
+    min-height: 100vh;
+    padding: 20px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    position: relative;
+    overflow-x: hidden; /* 新增：防止水平滚动 */
+}
+
+/* 2. 添加背景动画 */
+@keyframes softWave {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.floating-shapes {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -1;
+}
+
+.shape {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.2;
+    animation: float 20s ease-in-out infinite;
+}
+
+.shape-1 {
+    width: 300px;
+    height: 300px;
+    top: 10%;
+    right: -100px;
+    background: radial-gradient(circle, #3b82f6 0%, transparent 70%);
+    animation-delay: 0s;
+}
+
+.shape-2 {
+    width: 200px;
+    height: 200px;
+    bottom: 20%;
+    left: -80px;
+    background: radial-gradient(circle, #8b5cf6 0%, transparent 70%);
+    animation-delay: -5s;
+}
+
+.shape-3 {
+    width: 150px;
+    height: 150px;
+    top: 40%;
+    left: 80%;
+    background: radial-gradient(circle, #10b981 0%, transparent 70%);
+    animation-delay: -10s;
+}
+
+@keyframes float {
+    0%, 100% { 
+        transform: translate(0, 0) scale(1); 
+    }
+    33% { 
+        transform: translate(40px, -40px) scale(1.1); 
+    }
+    66% { 
+        transform: translate(-30px, 30px) scale(0.9); 
+    }
+}
+
+/* 主容器 */
+.app-container {
+    max-width: 480px;
+    width: 100%;
+    /* 移除min-height，让内容自然流动 */
+}
+
+/* 头部 */
+.app-header {
+    padding: 12px 0 16px 0;
+    text-align: center;
+    margin-bottom: 4px;
+}
+
+
+.app-header h1 {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.5px;
+}
+
+/* 主内容区域 */
+.app-main {
+    /* flex: 1;
+    display: flex;
+    flex-direction: column; */
+}
+
+/* 表单样式 */
+
+
+
+.password-form,
+.result-area {
+    background: rgba(255, 255, 255, 0.98); /* 改为半透明 */
+    backdrop-filter: blur(5px); /* 新增：磨砂玻璃效果 */
+    -webkit-backdrop-filter: blur(5px);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-md);
+    padding: 24px;
+    margin-bottom: 20px;
+}
+
+.result-area {
+    display: none;  /* 新增：初始隐藏 */
+}
+
+/* 输入组 - 紧凑间距 */
+.input-group {
+    margin-bottom: 14px;
+}
+
+.input-group.compact {
+    margin-bottom: 0;
+}
+
+.input-group label {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+}
+
+.input-group input[type="text"],
+.input-group input[type="password"],
+.input-group input[type="number"] {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    font-size: 15px;
+    transition: all 0.2s;
+    background: var(--bg-light);
+    color: var(--text-primary);
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    background: white;
+}
+
+.input-group input[type="password"] {
+    font-family: 'SF Mono', 'Cascadia Code', monospace;
+    letter-spacing: 0.5px;
+}
+
+/* 参数行（长度和计数器） */
+.param-row {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 18px;
+}
+
+.param-row .input-group {
+    flex: 1;
+}
+
+/* 字符配置区域 */
+.char-config {
+    background: var(--bg-light);
+    border-radius: var(--radius-md);
+    padding: 14px;
+    margin-bottom: 18px;
+    border: 1px solid var(--border-color);
+}
+
+.config-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 12px;
+}
+
+.config-controls {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.char-types {
+    display: flex;
+    gap: 16px;
+    flex: 1;
+}
+
+.char-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.char-option input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: var(--primary-color);
+}
+
+.char-option label {
+    margin: 0;
+    font-size: 14px;
+    color: var(--text-primary);
+    cursor: pointer;
+    font-variant-numeric: tabular-nums;
+}
+
+.symbol-select {
+    min-width: 120px;
+}
+
+.symbol-select select {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    background: white;
+    color: var(--text-primary);
+    cursor: pointer;
+}
+
+/* 生成按钮 */
+.generate-btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 4px;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+}
+
+.generate-btn:hover {
+    background: var(--primary-hover);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+.generate-btn:disabled {
+    background: var(--text-light);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+
+.password-box {
+    font-family: 'SF Mono', 'Cascadia Code', 'Courier New', monospace;
+    font-size: 18px;
+    padding: 16px;
+    background: var(--bg-light);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+    text-align: center;
+    word-break: break-all;
+    margin-bottom: 16px;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-primary);
+    line-height: 1.4;
+}
+
+.copy-btn {
+    width: 100%;
+    padding: 12px;
+    background: var(--success-color);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15); 
+}
+
+.copy-btn:hover {
+    background: var(--success-hover);
+}
+
+/* 错误信息 */
+.error-msg {
+    margin-top: 12px;
+    padding: 12px;
+    background: #fee2e2;
+    border: 1px solid #fecaca;
+    color: #991b1b;
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    display: none;
+}
+
+/* 移动端专门优化 */
+@media (max-width: 600px) {
+    body {
+        padding: 12px 8px;
+        align-items: flex-start;
+        /* 确保顶部对齐 */
+        min-height: 100vh;
+        height: auto;
+    }
+
+    .app-header {
+        padding: 8px 0 12px 0;
+        margin-bottom: 0;
+    }
+
+    .app-header h1 {
+        font-size: 20px;
+    }
+
+    .password-form {
+        padding: 16px;
+        margin-bottom: 12px;
+    }
+
+    .input-group {
+        margin-bottom: 12px;
+        /* 移动端更小的间距 */
+    }
+
+    .param-row {
+        gap: 12px;
+        margin-bottom: 14px;
+    }
+
+    .char-config {
+        padding: 12px;
+        margin-bottom: 14px;
+    }
+
+    .config-controls {
+        gap: 14px;
+    }
+
+    .result-area {
+        padding: 16px;
+        margin-top: 12px;
+    }
+
+    .password-box {
+        padding: 12px;
+        margin-bottom: 14px;
+        font-size: 16px;
+        min-height: 54px;
+        /* 稍微减小最小高度 */
+    }
+}
+
+/* 小屏幕手机专门优化 */
+@media (max-width: 375px) {
+    .app-header {
+        padding: 6px 0 10px 0;
+    }
+
+    .app-header h1 {
+        font-size: 18px;
+    }
+
+    .password-form {
+        padding: 14px;
+    }
+
+    .input-group {
+        margin-bottom: 10px;
+    }
+
+    .input-group label {
+        font-size: 13px;
+        margin-bottom: 4px;
+    }
+
+    .input-group input[type="text"],
+    .input-group input[type="password"],
+    .input-group input[type="number"] {
+        padding: 8px 10px;
+        font-size: 14px;
+    }
+
+    .char-config {
+        padding: 10px;
+        margin-bottom: 12px;
+    }
+
+    .char-types {
+        gap: 10px;
+    }
+
+    .char-option label {
+        font-size: 12px;
+    }
+
+    .symbol-select select {
+        padding: 6px 10px;
+        font-size: 13px;
+    }
+
+    .generate-btn {
+        padding: 12px;
+        font-size: 15px;
+    }
+
+    .result-area {
+        padding: 14px;
+        margin-top: 10px;
+    }
+
+    .password-box {
+        padding: 10px;
+        margin-bottom: 12px;
+        font-size: 15px;
+        min-height: 48px;
+    }
+
+    .copy-btn {
+        padding: 10px;
+        font-size: 14px;
+    }
+}
+
+/* 加载状态动画 */
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.7;
+    }
+}
+
+.loading {
+    animation: pulse 1.5s ease-in-out infinite;
+}
