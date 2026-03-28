@@ -2,7 +2,7 @@
  * 系统完整验证
  */
 
-import { paiPan, paiPanQuick, PaiPanResult, VERSION } from './index.js';
+import { paiPan, paiPanQuick, VERSION } from './index.js';
 import type { PaiPanInput, YaoInput } from './types/index.js';
 
 function assertEqual<T>(actual: T, expected: T, message: string): void {

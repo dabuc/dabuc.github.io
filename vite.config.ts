@@ -17,6 +17,7 @@ export default defineConfig({
       input: {
         main: resolve(__dirname, 'index.html'),
         passlite: resolve(__dirname, 'passlite/index.html'),
+        guarithm: resolve(__dirname, 'guarithm/index.html'),
       },
     },
   },

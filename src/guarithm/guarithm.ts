@@ -29,8 +29,8 @@ const VALID_GAN_ZHI_PAIRS: Record<string, string[]> = {
 let currentResult: any = null;
 let currentMarkdown = '';
 
-// 爻位名称映射
-const POSITION_NAMES: string[] = ['初爻', '二爻', '三爻', '四爻', '五爻', '上爻'];
+// // 爻位名称映射
+// const POSITION_NAMES: string[] = ['初爻', '二爻', '三爻', '四爻', '五爻', '上爻'];
 
 // 更新日支选项
 function updateDayZhiOptions() {
@@ -190,6 +190,10 @@ async function copyMarkdown() {
     if (!currentMarkdown) {
         alert('没有可复制的内容');
         return;
+    }
+
+    if (currentResult) {
+        console.log(`复制排盘结果: ${currentResult.benGuaName}`);
     }
     
     try {

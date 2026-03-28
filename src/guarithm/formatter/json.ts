@@ -70,9 +70,9 @@ export function toJSON(result: PaiPanResult): PaiPanJSON {
       day: result.ganZhi.day,
       xunKong: result.ganZhi.xunKong,
     },
-    shenSha: convertShenSha(result.shenSha.map, result.shenSha.xunKong),
-    benGua: convertGua(result.benGua, true),
-    bianGua: result.bianGua ? convertGua(result.bianGua, false) : null,
+    shenSha: convertShenSha(result.shenSha.map, result.ganZhi.xunKong),
+    benGua: convertGua(result.benGua),
+    bianGua: result.bianGua ? convertGua(result.bianGua) : null,
   };
 }
 
@@ -111,7 +111,7 @@ function convertShenSha(
  * 转换卦数据
  * 将内部数组索引转换为爻位编号 (0=初爻, 5=上爻)
  */
-function convertGua(gua: GuaResult, isBenGua: boolean): GuaJSON {
+function convertGua(gua: GuaResult): GuaJSON {
   // 内部索引: 0=上爻, 5=初爻
   // 爻位编号: 0=初爻, 5=上爻
   // 转换: 爻位编号 = 5 - 内部索引
@@ -125,7 +125,7 @@ function convertGua(gua: GuaResult, isBenGua: boolean): GuaJSON {
     shiYao: 5 - gua.shiYaoIndex,    // 转换为爻位编号
     yingYao: 5 - gua.yingYaoIndex,  // 转换为爻位编号
     // 爻数组按爻位编号排序 (0=初爻在前，5=上爻在后)
-    yao: gua.yao.map((yao, idx) => convertYao(yao, 5 - idx, isBenGua)).reverse(),
+    yao: gua.yao.map((yao, idx) => convertYao(yao, 5 - idx)).reverse(),
   };
 }
 
@@ -134,7 +134,7 @@ function convertGua(gua: GuaResult, isBenGua: boolean): GuaJSON {
  * @param yao 爻数据
  * @param position 爻位编号 (0=初爻, 5=上爻)
  */
-function convertYao(yao: Yao, position: number, isBenGua: boolean): YaoJSON {
+function convertYao(yao: Yao, position: number): YaoJSON {
   const name = `${yao.liuQin}${yao.diZhi}${yao.wuXing}`;
   
   return {

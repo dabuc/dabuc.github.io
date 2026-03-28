@@ -55,7 +55,7 @@ function formatGuaTable(result: PaiPanResult): string {
 
   // 六爻行 (从上爻到初爻)
   for (let i = 0; i < 6; i++) {
-    const row = formatYaoRow(benGua.yao[i], bianGua?.yao[i] ?? null, i);
+    const row = formatYaoRow(benGua.yao[i], bianGua?.yao[i] ?? null);
     lines.push(row);
   }
 
@@ -67,8 +67,7 @@ function formatGuaTable(result: PaiPanResult): string {
  */
 function formatYaoRow(
   benYao: Yao,
-  bianYao: Yao | null,
-  position: number
+  bianYao: Yao | null
 ): string {
   // 六神列
   const liuShen = benYao.liuShen;
