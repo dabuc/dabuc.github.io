@@ -80,32 +80,42 @@ function getInputParams(): PaiPanInput | null {
 }
 
 // 获取爻的显示符号
-function getYaoSymbol(yao: Yao): string {
-    if (yao.isDong) {
-        return yao.yinYang === 1 ? '⚊○' : '⚋×';
-    }
-    return yao.yinYang === 1 ? '⚊' : '⚋';
-}
+// function getYaoSymbol(yao: Yao): string {
+//     if (yao.isDong) {
+//         return yao.yinYang === 1 ? '⚊○' : '⚋×';
+//     }
+//     return yao.yinYang === 1 ? '⚊' : '⚋';
+// }
 
 // 获取爻的完整显示文本
 function getYaoText(yao: Yao): string {
     const base = `${yao.liuQin}${yao.diZhi}${yao.wuXing}`;
-    const symbol = getYaoSymbol(yao);
+    let symbol: string;
+    if (yao.isDong) {
+        symbol = yao.yinYang === 1 ? '⚊○' : '⚋×';
+    } else {
+        symbol = yao.yinYang === 1 ? '⚊' : '⚋';
+    }
     const shiYing = yao.shiYing ? ` ${yao.shiYing}` : '';
     return `${base} ${symbol}${shiYing}`;
 }
 
-// 格式化爻文本，添加世应标记样式
+// 格式化爻文本，添加世应标记和动爻符号样式
 function formatYaoTextWithMarkers(text: string): string {
     let result = text;
+    
+    // 处理世应标记
     if (result.includes('世')) {
         result = result.replace('世', '<span class="shiying-mark shi-mark">世</span>');
     }
     if (result.includes('应')) {
         result = result.replace('应', '<span class="shiying-mark ying-mark">应</span>');
     }
-    result = result.replace('⚋×', '<span class="dong-symbol">⚋×</span>');
-    result = result.replace('⚊○', '<span class="dong-symbol">⚊○</span>');
+    
+    // 处理动爻符号：× 用黑色加粗，○ 用红色加粗
+    result = result.replace(/×/g, '<span class="dong-symbol" data-symbol="×">×</span>');
+    result = result.replace(/○/g, '<span class="dong-symbol" data-symbol="○">○</span>');
+    
     return result;
 }
 
@@ -116,33 +126,29 @@ function buildResultHTML(result: any): string {
     const bianGua = rawData.bianGua;
     const hasBianGua = bianGua !== null;
     
-    // 神煞行
     const shenShaHtml = `<div class="shensha-line">${rawData.shenSha.displayString.replace(/ /g, '　')}</div>`;
     
-    // 干支行
     const xunKongStr = rawData.ganZhi.xunKong.join('、');
     const ganzhiHtml = `<div class="ganzhi-info">干支：${rawData.ganZhi.month}月　${rawData.ganZhi.day}日 (旬空：${xunKongStr})</div>`;
     
-    // 表格
     let tableHtml = '<table class="result-table">';
     
     // 卦宫信息行
-    tableHtml += `<tr class="gua-title">`;
-    tableHtml += `<th style="width: 80px;">六神</th>`;
-    tableHtml += `<th style="width: 80px;">伏神</th>`;
-    tableHtml += `<th>${benGua.info.gong}：${benGua.info.name}</th>`;
-    tableHtml += hasBianGua ? `<th>${bianGua.info.gong}：${bianGua.info.name}</th>` : `<th></th>`;
-    tableHtml += `</tr>`;
+    tableHtml += '<tr class="gua-title">';
+    tableHtml += '<th colspan="2"></th>';
+    tableHtml += `<th class="gua-info">${benGua.info.gong}：${benGua.info.name}</th>`;
+    tableHtml += hasBianGua ? `<th class="gua-info">${bianGua.info.gong}：${bianGua.info.name}</th>` : '<th></th>';
+    tableHtml += '</tr>';
     
     // 表头行
-    tableHtml += `<tr class="table-header">`;
-    tableHtml += `<th>六神</th>`;
-    tableHtml += `<th>伏神</th>`;
-    tableHtml += `<th>本卦</th>`;
-    tableHtml += hasBianGua ? `<th>变卦</th>` : `<th></th>`;
-    tableHtml += `</tr>`;
+    tableHtml += '<tr class="table-header">';
+    tableHtml += '<th>六神</th>';
+    tableHtml += '<th>伏神</th>';
+    tableHtml += '<th>本卦</th>';
+    tableHtml += hasBianGua ? '<th>变卦</th>' : '<th></th>';
+    tableHtml += '</tr>';
     
-    // 六爻行 (索引0=上爻, 5=初爻)
+    // 六爻行
     for (let i = 0; i < 6; i++) {
         const benYao = benGua.yao[i];
         const bianYao = hasBianGua ? bianGua.yao[i] : null;
@@ -152,15 +158,12 @@ function buildResultHTML(result: any): string {
         const benText = getYaoText(benYao);
         const bianText = bianYao ? getYaoText(bianYao) : '';
         
-        const benClass = benYao.isDong ? 'dong-yao' : '';
-        const bianClass = bianYao?.isDong ? 'dong-yao' : '';
-        
-        tableHtml += `<tr class="yao-row">`;
-        tableHtml += `<td class="${benClass}">${liuShen}</td>`;
-        tableHtml += `<td>${fuShen}</td>`;
-        tableHtml += `<td class="${benClass}">${formatYaoTextWithMarkers(benText)}</td>`;
-        tableHtml += `<td class="${bianClass}">${bianText ? formatYaoTextWithMarkers(bianText) : ''}</td>`;
-        tableHtml += `</tr>`;
+        tableHtml += '<tr class="yao-row">';
+        tableHtml += `<td>${liuShen}</td>`;
+        tableHtml += `<td>${fuShen || '—'}</td>`;
+        tableHtml += `<td>${formatYaoTextWithMarkers(benText)}</td>`;
+        tableHtml += `<td>${bianText ? formatYaoTextWithMarkers(bianText) : ''}</td>`;
+        tableHtml += '</tr>';
     }
     
     tableHtml += '</table>';

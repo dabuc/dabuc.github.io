@@ -230,9 +230,25 @@ header p {
     color: #1e40af;
 }
 
-/* 动爻高亮 */
+/* 动爻 - 只高亮符号，不加粗文字 */
 .dong-yao {
+    font-weight: normal;
+}
+
+/* 动爻符号样式 */
+.dong-symbol {
     font-weight: bold;
+    display: inline-block;
+}
+
+/* × 符号用黑色 */
+.dong-symbol[data-symbol="×"] {
+    color: #000000;
+}
+
+/* ○ 符号用红色 */
+.dong-symbol[data-symbol="○"] {
+    color: #e53e3e;
 }
 
 /* 世应标记 */
@@ -323,5 +339,96 @@ header p {
     .result-content th,
     .result-content td {
         padding: 0.5rem 0.25rem;
+    }
+}
+
+
+/* 表格样式 */
+.result-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+    font-family: 'Segoe UI', 'Noto Sans CJK SC', monospace;
+}
+
+.result-table th,
+.result-table td {
+    padding: 0.6rem 0.4rem;
+    border: none;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+/* 六神列 - 固定2字符宽度 */
+.result-table th:first-child,
+.result-table td:first-child {
+    width: 2.5em;
+    text-align: center;
+}
+
+/* 伏神列 - 自适应内容 */
+.result-table th:nth-child(2),
+.result-table td:nth-child(2) {
+    text-align: center;
+}
+
+/* 本卦列和变卦列 - 左对齐，保持对齐 */
+.result-table th:nth-child(3),
+.result-table td:nth-child(3),
+.result-table th:nth-child(4),
+.result-table td:nth-child(4) {
+    text-align: left;
+}
+
+/* 卦宫信息行 - 第一列和第二列合并占位 */
+.result-table .gua-title th:first-child,
+.result-table .gua-title th:nth-child(2) {
+    background: #eef2ff;
+    padding: 0.5rem 0;
+}
+
+/* 卦宫信息行的卦信息列 - 左对齐 */
+.result-table .gua-title .gua-info {
+    text-align: left;
+    padding-left: 0.4rem;
+    background: #eef2ff;
+}
+
+/* 表头行背景 */
+.result-table .table-header th {
+    background: #f1f5f9;
+}
+
+/* 伏神为空时显示短横线 */
+.result-table td:nth-child(2):empty::before {
+    content: "—";
+    color: #cbd5e1;
+}
+
+/* 手机端 */
+@media (max-width: 768px) {
+    .result-table {
+        font-size: 0.7rem;
+    }
+    
+    .result-table th,
+    .result-table td {
+        padding: 0.4rem 0.2rem;
+    }
+    
+    .result-table th:first-child,
+    .result-table td:first-child {
+        width: 2em;
+    }
+}
+
+@media (max-width: 480px) {
+    .result-table {
+        font-size: 0.65rem;
+    }
+    
+    .result-table th,
+    .result-table td {
+        padding: 0.3rem 0.15rem;
     }
 }
