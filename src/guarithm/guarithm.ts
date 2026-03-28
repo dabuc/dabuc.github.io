@@ -128,7 +128,7 @@ function buildResultHTML(result: any): string {
     
     const shenShaHtml = `<div class="shensha-line">${rawData.shenSha.displayString.replace(/ /g, '　')}</div>`;
     
-    const xunKongStr = rawData.ganZhi.xunKong.join('、');
+    const xunKongStr = rawData.ganZhi.xunKong.join('');
     const ganzhiHtml = `<div class="ganzhi-info">干支：${rawData.ganZhi.month}月　${rawData.ganZhi.day}日 (旬空：${xunKongStr})</div>`;
     
     let tableHtml = '<table class="result-table">';
