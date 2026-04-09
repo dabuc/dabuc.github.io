@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>极衍占·简法 | 轻享版 · 一键起卦易数器</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        body {
+            /* 柔和暖白渐变，轻松明亮 */
+            background: linear-gradient(135deg, #f9f5ef 0%, #ece4d9 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Inter', 'Segoe UI', 'SF Pro Text', 'Noto Sans CJK SC', system-ui, -apple-system, monospace;
+            padding: 1rem;
+            margin: 0;
+        }
+
+        /* 主卡片 —— 温润浅色玻璃质感 */
+        .card {
+            max-width: 650px;
+            width: 100%;
+            background: rgba(255, 252, 245, 0.92);
+            backdrop-filter: blur(2px);
+            border-radius: 2.5rem;
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.02), inset 0 1px 0 rgba(255,255,255,0.8);
+            padding: 1.8rem 2rem 2rem;
+            transition: all 0.2s ease;
+            border: 1px solid rgba(205, 175, 120, 0.25);
+        }
+
+        .title-section {
+            text-align: center;
+            margin-bottom: 1.6rem;
+        }
+        .title-section h1 {
+            font-size: 1.9rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            background: linear-gradient(125deg, #a77b3e, #cb9e6b, #e2bc84);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            margin: 0 0 0.2rem;
+            text-shadow: none;
+        }
+        .sub {
+            color: #b0875a;
+            font-size: 0.75rem;
+            border-top: 1px solid #f0e0ce;
+            display: inline-block;
+            padding-top: 0.4rem;
+            letter-spacing: 1.5px;
+            font-weight: 400;
+        }
+
+        /* 秒表屏幕 — 浅色典雅 */
+        .stopwatch {
+            background: #ffffffcc;
+            backdrop-filter: blur(4px);
+            border-radius: 2rem;
+            padding: 0.9rem 0.5rem;
+            margin: 0.8rem 0 1.2rem;
+            box-shadow: inset 0 2px 6px rgba(100, 70, 40, 0.05), 0 6px 12px rgba(0, 0, 0, 0.02);
+            border: 1px solid #f3e7da;
+        }
+        .timer-digits {
+            font-family: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
+            font-size: clamp(2.2rem, 9vw, 3.8rem);
+            font-weight: 550;
+            text-align: center;
+            letter-spacing: 5px;
+            background: #fef7ef;
+            padding: 0.4rem 0.2rem;
+            border-radius: 2rem;
+            color: #946b38;
+            text-shadow: 0 1px 1px rgba(255,245,220,0.8);
+            word-break: break-word;
+            border: 1px solid #f3e2cf;
+        }
+        .timer-digits span {
+            display: inline-block;
+            min-width: 3rem;
+            text-align: center;
+        }
+
+        /* 主按钮区 — 清爽专业 */
+        .button-wrapper {
+            display: flex;
+            justify-content: center;
+            margin: 1rem 0 0.8rem;
+        }
+        .btn-primary {
+            width: 82%;
+            border: none;
+            padding: 0.9rem 0;
+            font-size: 1.7rem;
+            font-weight: 600;
+            border-radius: 56px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: #d9c2a1;
+            color: #4f3a28;
+            box-shadow: 0 5px 12px rgba(150, 110, 70, 0.15);
+            letter-spacing: 6px;
+            font-family: inherit;
+            backdrop-filter: blur(2px);
+            border: 1px solid #fff1e0;
+        }
+        .btn-primary:active {
+            transform: scale(0.97);
+            background: #ccb28b;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        
+        /* 重置按钮样式 —— 醒目的暖红/琥珀色，增加视觉阻力，避免随手误点 */
+        .btn-primary.reset-mode {
+            background: #e0a878;
+            color: #442c1a;
+            letter-spacing: 4px;
+            box-shadow: 0 5px 12px rgba(160, 90, 40, 0.25);
+            border: 1px solid #ffdbb5;
+            position: relative;
+        }
+        .btn-primary.reset-mode:hover {
+            background: #da9a62;
+            transform: scale(0.98);
+        }
+        .btn-primary.reset-mode:active {
+            background: #c88448;
+            transform: scale(0.96);
+        }
+        /* 额外增加一个重置警示符号（伪元素，仅重置模式可见）*/
+        .btn-primary.reset-mode::before {
+            content: "⚠️ ";
+            font-size: 1.3rem;
+            letter-spacing: 0;
+            margin-right: 4px;
+            vertical-align: middle;
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            transform: none;
+            cursor: not-allowed;
+        }
+
+        /* 进度 & 提示区域 */
+        .record-counter {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin: 0.6rem 0 0.9rem;
+            color: #7f6242;
+            font-size: 0.85rem;
+            border-bottom: 1px solid #ecdbba;
+            padding-bottom: 0.5rem;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .badge {
+            background: #f2e6da;
+            padding: 0.2rem 0.9rem;
+            border-radius: 30px;
+            font-family: monospace;
+            font-weight: 500;
+            color: #b57c48;
+            font-size: 0.75rem;
+        }
+        .progress-ring {
+            font-family: monospace;
+            background: #f7efde;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            color: #8b6946;
+            font-weight: 500;
+        }
+
+        /* 记录表格区 — 明亮纸纹感 + 固定高度区域，防止按钮上下漂移 */
+        .records-section {
+            background: #fef8f0;
+            border-radius: 1.5rem;
+            padding: 0.8rem;
+            margin-top: 0.8rem;
+            border: 1px solid #f0e2d2;
+            box-shadow: inset 0 0 0 1px #fffefc, 0 2px 6px rgba(0,0,0,0.02);
+        }
+        .section-title {
+            font-size: 0.85rem;
+            color: #b6814a;
+            margin-left: 0.4rem;
+            margin-bottom: 0.5rem;
+            letter-spacing: 1px;
+            font-weight: 500;
+        }
+        /* 关键：固定记录区域高度，内容超出滚动，按钮不再上下移动 */
+        .record-grid {
+            max-height: 210px;
+            height: 210px;          /* 固定高度，确保卡片主体稳定 */
+            overflow-y: auto;
+            border-radius: 1rem;
+        }
+        .record-table {
+            width: 100%;
+            font-size: 0.85rem;
+            border-collapse: collapse;
+            color: #4d3a2a;
+        }
+        .record-table th, .record-table td {
+            padding: 0.55rem 0.2rem;
+            text-align: center;
+            border-bottom: 1px solid #f0e2d4;
+        }
+        .record-table th {
+            font-weight: 600;
+            color: #ad7b48;
+            background: #fff6ec;
+            position: sticky;
+            top: 0;
+            font-size: 0.8rem;
+            z-index: 2;
+        }
+        .value-2 {
+            color: #43856b;
+            font-weight: 600;
+            background: #eafaf2;
+            border-radius: 20px;
+            display: inline-block;
+            width: 32px;
+            line-height: 24px;
+        }
+        .value-3 {
+            color: #c17b3c;
+            font-weight: 600;
+            background: #fef1e4;
+            border-radius: 20px;
+            display: inline-block;
+            width: 32px;
+            line-height: 24px;
+        }
+
+        /* 六爻结果区 — 淡金微光 */
+        .yao-area {
+            margin-top: 1.5rem;
+            background: #fef6ed;
+            border-radius: 1.6rem;
+            padding: 0.9rem 1rem;
+            border-left: 5px solid #e7bc8b;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+        }
+        .yao-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #b97f48;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .yao-digits {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 0.8rem 0 0.3rem;
+        }
+        .yao-item {
+            background: #ffffffdd;
+            flex: 1;
+            min-width: 58px;
+            text-align: center;
+            padding: 0.6rem 0;
+            border-radius: 1.8rem;
+            font-family: monospace;
+            font-weight: 600;
+            font-size: 1.45rem;
+            backdrop-filter: blur(2px);
+            border: 1px solid #ecd5b5;
+            color: #8b613c;
+            transition: all 0.1s;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+        }
+        .yao-label {
+            font-size: 0.68rem;
+            display: block;
+            color: #b48b5a;
+            margin-top: 6px;
+            font-weight: 450;
+        }
+        .empty-yao {
+            background: #f6ede3;
+            border-color: #eedbc8;
+            color: #be9f7a;
+        }
+        .footnote {
+            font-size: 0.65rem;
+            text-align: center;
+            margin-top: 1rem;
+            color: #b98f62;
+            letter-spacing: 0.3px;
+        }
+
+        .record-grid::-webkit-scrollbar {
+            width: 5px;
+        }
+        .record-grid::-webkit-scrollbar-track {
+            background: #f5e8db;
+            border-radius: 10px;
+        }
+        .record-grid::-webkit-scrollbar-thumb {
+            background: #dbbc95;
+            border-radius: 10px;
+        }
+
+        /* 响应式微调 */
+        @media (max-width: 500px) {
+            .card {
+                padding: 1.2rem 1.2rem 1.6rem;
+            }
+            .btn-primary {
+                font-size: 1.4rem;
+                letter-spacing: 3px;
+            }
+            .yao-item {
+                min-width: 48px;
+                font-size: 1.2rem;
+            }
+            .record-grid {
+                max-height: 190px;
+                height: 190px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="card">
+    <div class="title-section">
+        <h1>⚛️ 极衍占·简法</h1>
+        <div class="sub">轻触起卦 · 毫秒随机 · 三停定爻</div>
+    </div>
+
+    <!-- 秒表显示 -->
+    <div class="stopwatch">
+        <div class="timer-digits" id="timerDisplay">00:00:00:00</div>
+    </div>
+
+    <!-- 核心单按钮区域 -->
+    <div class="button-wrapper">
+        <button class="btn-primary" id="actionBtn">开始</button>
+    </div>
+
+    <div class="record-counter">
+        <span>📋 记录次数 <strong id="recordCount">0</strong> / 18</span>
+        <span class="badge">✨ 末位奇数→3 偶数→2</span>
+        <span class="progress-ring" id="progressHint">⚪ 待启动</span>
+    </div>
+
+    <!-- 记录列表：固定高度区域，确保按钮稳定不漂移 -->
+    <div class="records-section">
+        <div class="section-title">📜 时空记录 (奇偶值)</div>
+        <div class="record-grid">
+            <table class="record-table" id="recordTable">
+                <thead>
+                <tr><th>#</th><th>时刻 (时:分:秒:分秒)</th><th>⚡ 爻数</th></tr>
+                </thead>
+                <tbody id="recordTbody">
+                <tr><td colspan="3" style="text-align:center; color:#b6946a;">✨ 轻点「开始」，记录自然涌动</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 六爻显示区 -->
+    <div class="yao-area">
+        <div class="yao-title">
+            <span>🎋 六爻卦数 · 自下而上</span>
+            <span style="font-size:0.7rem; background:#f3e8dd; padding:2px 10px; border-radius:30px;">6老阴 7少阳 8少阴 9老阳</span>
+        </div>
+        <div class="yao-digits" id="yaoContainer">
+            <!-- 动态生成6个爻位 -->
+        </div>
+        <div class="footnote">
+            ※ 每3次记录为一爻 → 三停之和定阴阳老少
+        </div>
+    </div>
+</div>
+
+<script>
+    // ---------- DOM 元素 ----------
+    const timerDisplay = document.getElementById('timerDisplay');
+    const actionBtn = document.getElementById('actionBtn');
+    const recordCountSpan = document.getElementById('recordCount');
+    const recordTbody = document.getElementById('recordTbody');
+    const yaoContainer = document.getElementById('yaoContainer');
+    const progressHint = document.getElementById('progressHint');
+
+    // ---------- 秒表核心 ----------
+    let timerInterval = null;
+    let startBaseTime = null;          // performance 基准
+    let currentElapsedMs = 0;          // 当前累计毫秒
+    let isRunning = false;              // 秒表是否走动
+
+    // 记录数组: 存储 { elapsedMs, timeStr, parityValue }
+    let records = [];                  // 最多18条
+
+    // ---------- 辅助函数 ----------
+    function formatTime(ms) {
+        if (ms < 0) ms = 0;
+        const hours = Math.floor(ms / 3600000);
+        const minutes = Math.floor((ms % 3600000) / 60000);
+        const seconds = Math.floor((ms % 60000) / 1000);
+        const centiseconds = Math.floor((ms % 1000) / 10);
+        return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}:${centiseconds.toString().padStart(2, '0')}`;
+    }
+
+    // 从时间字符串获取末位奇偶值 (偶数2，奇数3)
+    function getParityFromTimeStr(timeStr) {
+        const parts = timeStr.split(':');
+        if (parts.length !== 4) return 2;
+        const centiPart = parts[3];
+        if (centiPart.length === 0) return 2;
+        const lastDigit = parseInt(centiPart.slice(-1), 10);
+        return (lastDigit % 2 === 0) ? 2 : 3;
+    }
+
+    function updateDisplayFromElapsed() {
+        timerDisplay.innerText = formatTime(currentElapsedMs);
+    }
+
+    // 刷新全部UI (记录表，六爻，计数器，进度提示)
+    function refreshUI() {
+        recordCountSpan.innerText = records.length;
+        
+        // 渲染记录表格
+        if (records.length === 0) {
+            recordTbody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:#b6946a;">✨ 轻点「开始」，记录自然涌动</td></tr>`;
+        } else {
+            let html = '';
+            records.forEach((rec, idx) => {
+                const parityVal = rec.parityValue;
+                const parityClass = parityVal === 2 ? 'value-2' : 'value-3';
+                html += `<tr>
+                            <td style="font-weight:500;">${idx + 1}</td>
+                            <td style="font-family:monospace; letter-spacing:0.5px;">${rec.timeStr}</td>
+                            <td><span class="${parityClass}">${parityVal}</span></td>
+                          </tr>`;
+            });
+            recordTbody.innerHTML = html;
+        }
+
+        // 计算并渲染六爻
+        const yaoNumbers = computeYaoFromRecords(records);
+        renderYaoDigits(yaoNumbers);
+
+        // 更新进度提示文字
+        const remain = 18 - records.length;
+        if (records.length === 18) {
+            progressHint.innerHTML = '✅ 十八组圆满 · 可重置';
+        } else if (isRunning) {
+            progressHint.innerHTML = `⏺ 采集灵机中 (剩余${remain}组)`;
+        } else if (!isRunning && records.length > 0 && records.length < 18) {
+            progressHint.innerHTML = `⏸ 静候 · 剩余${remain}组`;
+        } else if (!isRunning && records.length === 0) {
+            progressHint.innerHTML = `⚪ 按下「开始」启卦`;
+        } else {
+            progressHint.innerHTML = `📌 待记录`;
+        }
+    }
+
+    // 根据记录数组计算爻值 (最多6爻)
+    function computeYaoFromRecords(records) {
+        const yaoList = [];
+        for (let i = 0; i + 2 < records.length; i += 3) {
+            const group = records.slice(i, i + 3);
+            if (group.length === 3) {
+                const sum = group[0].parityValue + group[1].parityValue + group[2].parityValue;
+                let yaoVal = null;
+                if (sum === 6) yaoVal = 6;
+                else if (sum === 7) yaoVal = 7;
+                else if (sum === 8) yaoVal = 8;
+                else if (sum === 9) yaoVal = 9;
+                else yaoVal = sum;
+                yaoList.push(yaoVal);
+            }
+        }
+        while (yaoList.length < 6) {
+            yaoList.push(null);
+        }
+        return yaoList.slice(0,6);
+    }
+
+    function renderYaoDigits(yaoNumbers) {
+        yaoContainer.innerHTML = '';
+        const positions = ['初爻', '二爻', '三爻', '四爻', '五爻', '上爻'];
+        for (let i = 0; i < yaoNumbers.length; i++) {
+            const val = yaoNumbers[i];
+            const isValid = (val === 6 || val === 7 || val === 8 || val === 9);
+            const yaoDiv = document.createElement('div');
+            yaoDiv.className = 'yao-item';
+            if (!isValid) {
+                yaoDiv.classList.add('empty-yao');
+                yaoDiv.innerHTML = `<span>⚋ ⚊</span><span class="yao-label">${positions[i]} 待成</span>`;
+            } else {
+                let yaoSymbol = '';
+                if (val === 6) yaoSymbol = '⚋ 老阴';
+                else if (val === 7) yaoSymbol = '⚊ 少阳';
+                else if (val === 8) yaoSymbol = '⚋ 少阴';
+                else if (val === 9) yaoSymbol = '⚊ 老阳';
+                yaoDiv.innerHTML = `<span style="font-size:1.3rem;">${val}</span><span class="yao-label">${positions[i]} ${yaoSymbol}</span>`;
+            }
+            yaoContainer.appendChild(yaoDiv);
+        }
+    }
+
+    // 核心：记录当前时刻（在秒表运行中调用）
+    function recordCurrentMoment() {
+        if (records.length >= 18) {
+            return false;
+        }
+        const timeStr = formatTime(currentElapsedMs);
+        const parityVal = getParityFromTimeStr(timeStr);
+        records.push({
+            elapsedMs: currentElapsedMs,
+            timeStr: timeStr,
+            parityValue: parityVal
+        });
+        refreshUI();
+        return true;
+    }
+
+    // 启动秒表走动 (基于currentElapsedMs)
+    function startTimer() {
+        if (timerInterval) clearInterval(timerInterval);
+        startBaseTime = performance.now() - currentElapsedMs;
+        timerInterval = setInterval(() => {
+            if (!isRunning) return;
+            const now = performance.now();
+            const elapsed = now - startBaseTime;
+            if (elapsed >= 0) {
+                currentElapsedMs = elapsed;
+                updateDisplayFromElapsed();
+            }
+        }, 10);
+        isRunning = true;
+    }
+
+    // 停止秒表 (不重置累计时间)
+    function pauseTimer() {
+        if (timerInterval) {
+            clearInterval(timerInterval);
+            timerInterval = null;
+        }
+        if (isRunning && startBaseTime !== null) {
+            const finalMs = performance.now() - startBaseTime;
+            if (finalMs >= 0) currentElapsedMs = finalMs;
+            updateDisplayFromElapsed();
+        }
+        isRunning = false;
+    }
+
+    // 重置全部 (归零秒表 + 清空记录 + 重置按钮文字和状态)
+    function fullReset() {
+        // 停止计时器
+        if (timerInterval) {
+            clearInterval(timerInterval);
+            timerInterval = null;
+        }
+        isRunning = false;
+        startBaseTime = null;
+        currentElapsedMs = 0;
+        updateDisplayFromElapsed();
+        records = [];
+        refreshUI();
+        
+        // 按钮重置为「开始」模式，并移除重置样式
+        actionBtn.innerText = '开始';
+        actionBtn.classList.remove('reset-mode');
+        actionBtn.disabled = false;
+    }
+
+    // 核心交互：单按钮逻辑 (状态机)
+    function onMainButtonClick() {
+        const btnText = actionBtn.innerText;
+        
+        // 情况1: 重置模式 (已满18组，按钮显示重置)
+        if (btnText === '重置') {
+            fullReset();
+            return;
+        }
+        
+        // 情况2: 开始模式 (秒表未启动，初始状态或重置后)
+        if (btnText === '开始') {
+            // 如果存在旧记录但按钮异常处于开始模式，则先彻底重置保证干净（符合净心起卦）
+            if (records.length > 0) {
+                fullReset();
+            }
+            // 启动秒表
+            startTimer();
+            // 按钮变为「记录」
+            actionBtn.innerText = '记录';
+            actionBtn.classList.remove('reset-mode');
+            refreshUI();
+            return;
+        }
+        
+        // 情况3: 记录模式 (秒表运行中，点击记录当前时刻)
+        if (btnText === '记录') {
+            // 必须秒表在运行中才可记录
+            if (!isRunning) {
+                // 防御: 如果秒表异常停止但按钮为记录模式，修复状态
+                if (records.length >= 18) {
+                    pauseTimer();
+                    actionBtn.innerText = '重置';
+                    actionBtn.classList.add('reset-mode');
+                    refreshUI();
+                } else if (records.length > 0 && records.length < 18) {
+                    fullReset();
+                } else {
+                    fullReset();
+                }
+                return;
+            }
+            // 正常记录
+            if (records.length >= 18) {
+                pauseTimer();
+                actionBtn.innerText = '重置';
+                actionBtn.classList.add('reset-mode');
+                refreshUI();
+                return;
+            }
+            
+            const success = recordCurrentMoment();
+            if (success && records.length === 18) {
+                // 恰好录满18次：停止秒表，按钮变成重置
+                pauseTimer();
+                actionBtn.innerText = '重置';
+                actionBtn.classList.add('reset-mode');
+                refreshUI();
+            } else {
+                // 未满18，刷新界面后继续保持记录状态，秒表继续走动
+                refreshUI();
+                // 确保秒表还在运行
+                if (!isRunning) {
+                    startTimer();
+                }
+            }
+            return;
+        }
+    }
+
+    // 初始化
+    function init() {
+        fullReset();
+        actionBtn.addEventListener('click', onMainButtonClick);
+        // 页面关闭时清理定时器
+        window.addEventListener('beforeunload', () => {
+            if (timerInterval) clearInterval(timerInterval);
+        });
+    }
+    
+    init();
+</script>
+</body>
+</html>
